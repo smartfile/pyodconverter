@@ -226,9 +226,9 @@ PAGE_STYLE_OVERRIDE_PROPERTIES = {
     FAMILY_SPREADSHEET: {
         #--- Scale options: uncomment 1 of the 3 ---
         # a) 'Reduce / enlarge printout': 'Scaling factor'
-        "PageScale": 100,
+        #"PageScale": 100,
         # b) 'Fit print range(s) to width / height': 'Width in pages' and 'Height in pages'
-        #"ScaleToPagesX": 1, "ScaleToPagesY": 1000,
+        "ScaleToPagesX": 1, "ScaleToPagesY": 1000,
         # c) 'Fit print range(s) on number of pages': 'Fit print range(s) on number of pages'
         #"ScaleToPages": 1,
         "PrintGrid": False
@@ -278,6 +278,10 @@ class DocumentConverter:
                 data=None):
         import uno
 
+        inputExt = self._getFileExt(inputFile)
+        outputExt = self._getFileExt(outputFile);
+
+
         if not paperSize in PAPER_SIZE_MAP:
             raise Exception("The paper size given doesn't exist.")
         else:
@@ -294,15 +298,15 @@ class DocumentConverter:
         if not paperOrientation in PAPER_ORIENTATION_MAP:
             raise Exception("The paper orientation given doesn't exist.")
         else:
-            paperOrientation = PAPER_ORIENTATION_MAP[paperOrientation]
+            if inputExt in ["ppt","pptx","opp"]:
+                paperOrientation=PAPER_ORIENTATION_MAP["LANDSCAPE"]
+            else:
+                paperOrientation = PAPER_ORIENTATION_MAP[paperOrientation]
 
         inputUrl = self._toFileUrl(inputFile)
         outputUrl = self._toFileUrl(outputFile)
 
         loadProperties = { "Hidden": True }
-
-        inputExt = self._getFileExt(inputFile)
-        outputExt = self._getFileExt(outputFile);
 
         if inputExt in IMPORT_FILTER_MAP:
             loadProperties.update(IMPORT_FILTER_MAP[inputExt])
